@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using System.IO.Compression;
+using System.Text.RegularExpressions;
 using iText.IO.Image;
 using iText.Kernel.Pdf;
 using iText.Layout;
@@ -20,7 +22,9 @@ Console.ReadLine();
 
 string[] files = Directory.GetFiles(info.FullName);
 
-SortedDictionary<int, string> useFile = new SortedDictionary<int, string>();
+SortedDictionary<double, string> useFile = new SortedDictionary<double, string>();
+
+const string Pattern = @"(Том (\d+))|(Глава (\d+(\.\d+)?))";
 
 foreach (var file in files)
 {
@@ -36,15 +40,42 @@ foreach (var file in files)
         continue;
     }
 
-    if (int.TryParse(fileName, out int number))
+    Regex rgx = new Regex(Pattern);
+    
+    MatchCollection matchesNums = rgx.Matches(fileName);
+
+    if (matchesNums.Count != 2)
     {
-        useFile.Add(number, file);
-        Console.WriteLine(fileName);
+        Console.WriteLine("В названии файла нет 2 чисел: " + fileName);
+        continue;
+    }
+
+    double orderNumber = 0;
+    
+    if (int.TryParse(matchesNums[0].Groups[2].Value, out int tom))
+    {
+        orderNumber += tom*10000;
     }
     else
     {
-        Console.WriteLine("Имя файла не число: " + file);
+        Console.WriteLine("Не удалось спарсить номер тома: " + matchesNums[0].Groups[2].Value);
+        continue;
     }
+    
+    if (double.TryParse(matchesNums[1].Groups[4].Value, 
+            NumberStyles.Any, 
+            CultureInfo.InvariantCulture, 
+            out double chapter))
+    {
+        orderNumber += chapter;
+    }
+    else
+    {
+        Console.WriteLine("Не удалось спарсить номер главы: " + matchesNums[1].Groups[4].Value);
+        continue;
+    }
+    
+    useFile.Add(orderNumber, file);
 }
 
 const string OutPdfFolder = "OutPDF";
@@ -67,6 +98,8 @@ const string ArchiveTempFolder = "ArchiveTempFolder";
 
 foreach (var orderFileName in useFile)
 {
+    Console.WriteLine("Добавляется: " + orderFileName.Value);
+    
     SortedDictionary<int, string> tempImageFile = new SortedDictionary<int, string>();
     
     DirectoryInfo outArchiveDirectory = Directory.CreateDirectory(ArchiveTempFolder);
