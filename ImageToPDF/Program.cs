@@ -112,6 +112,12 @@ foreach (var orderFileName in useFile)
     foreach (var imageFile in Directory.GetFiles(outArchiveDirectory.FullName))
     {
         string[] fileName = imageFile.Split('\\')[^1].Split('.');
+
+        if (fileName[1].Equals("gif"))
+        {
+            Console.WriteLine("Гифку вставлять не будем");
+            continue;
+        }
         
         if (int.TryParse(fileName[0], out int number))
         {
