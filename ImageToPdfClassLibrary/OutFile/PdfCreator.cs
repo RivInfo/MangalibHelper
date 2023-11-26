@@ -103,6 +103,12 @@ public class PdfCreator
 
     private IEnumerable<KeyValuePair<int, string>> GetImageFiles(string filePath)
     {
+        if (filePath == null || filePath == "")
+        {
+            Console.WriteLine("!!! обнаружен пустой файл !!! \nПроверьте выходные файлы");
+            return Enumerable.Empty<KeyValuePair<int, string>>();
+        }
+
         SortedDictionary<int, string> tempImageFiles = new SortedDictionary<int, string>();
         foreach (string resourcesFile in _tempFolder.GetFilesFromZipFile(filePath))
         {
@@ -118,7 +124,7 @@ public class PdfCreator
                 var gifImage = Image.FromFile(resourcesFile);
                     
                 resourcesFilePath[^1] = fileName[0] + '.' + "jpeg";
-                fileToAdd = string.Concat(resourcesFilePath, '\\');
+                fileToAdd = string.Join('\\',  resourcesFilePath);
                     
                 // Сохраните изображение в формате JPEG
                 gifImage.Save(fileToAdd, System.Drawing.Imaging.ImageFormat.Jpeg);
