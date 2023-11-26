@@ -1,14 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Globalization;
-using System.IO.Compression;
-using System.Text.RegularExpressions;
 using ImageToPdfClassLibrary.Archive;
 using ImageToPdfClassLibrary.OutFile;
-using iText.IO.Image;
-using iText.Kernel.Pdf;
-using iText.Layout;
-using iText.Layout.Element;
-using iText.StyledXmlParser.Jsoup.Select;
 
 public class ImageToPDF
 {
@@ -31,8 +23,11 @@ public class ImageToPDF
 
         VolumeCreationStrategy? command = null;
 
-        if (set.Contains('s')) { command = VolumeCreationStrategy.single; }
-        if (set.Contains('m')) { command = VolumeCreationStrategy.multy; }
+        if (set.Contains('s')) 
+            command = VolumeCreationStrategy.Single;
+        
+        if (set.Contains('m')) 
+            command = VolumeCreationStrategy.Multy;
 
         return program(command);
     }
@@ -73,8 +68,12 @@ public class ImageToPDF
 
         switch (command)
         {
-            case VolumeCreationStrategy.multy: pdfCreator.CreateVolumePdfs(); break;
-            case VolumeCreationStrategy.single: pdfCreator.CreateOnePdf(); break;
+            case VolumeCreationStrategy.Multy: 
+                pdfCreator.CreateVolumePdfs(); 
+                break;
+            case VolumeCreationStrategy.Single: 
+                pdfCreator.CreateOnePdf(); 
+                break;
         }    
 
         Process.Start(new ProcessStartInfo { FileName = pdfCreator.GetOutDirectoryPath, UseShellExecute = true });
@@ -107,9 +106,9 @@ public class ImageToPDF
         } while (command < 1 || command > 2);
 
         switch (command) {
-            case 1: return VolumeCreationStrategy.single;
-            case 2: return VolumeCreationStrategy.multy;
-            default: return VolumeCreationStrategy.single;
+            case 1: return VolumeCreationStrategy.Single;
+            case 2: return VolumeCreationStrategy.Multy;
+            default: return VolumeCreationStrategy.Single;
         }
 
     }
@@ -117,5 +116,6 @@ public class ImageToPDF
 
 public enum VolumeCreationStrategy
 {
-    single, multy
+    Single, 
+    Multy
 }
