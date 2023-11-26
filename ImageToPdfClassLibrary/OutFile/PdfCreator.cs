@@ -103,9 +103,9 @@ public class PdfCreator
 
     private IEnumerable<KeyValuePair<int, string>> GetImageFiles(string filePath)
     {
-        if (filePath == null || filePath == "")
+        if (string.IsNullOrWhiteSpace(filePath))
         {
-            Console.WriteLine("!!! обнаружен пустой файл !!! \nПроверьте выходные файлы");
+            Console.WriteLine("Путь до файла пустой");
             return Enumerable.Empty<KeyValuePair<int, string>>();
         }
 
