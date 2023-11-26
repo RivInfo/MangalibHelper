@@ -10,8 +10,7 @@ using iText.Layout;
 using iText.Layout.Element;
 using iText.StyledXmlParser.Jsoup.Select;
 
-Console.WriteLine("Поместите архивы в открывшуюся папку, " +
-                  "именование должно быть цифрами в порядке глав");
+Console.WriteLine("Поместите архивы в открывшуюся папку");
 
 DirectoryInfo info = Directory.CreateDirectory(ArchiveCollection.ArchiveFolderName);
 
